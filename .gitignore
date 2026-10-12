@@ -30,10 +30,12 @@ wheels/
 !.env.example
 *.local
 
-# SQLite / databases if any created locally
+# SQLite databases created locally
 *.sqlite3
 *.db
+leave_system.db
 
-# OS / Editor specific
+# OS & Editor files
 .DS_Store
 Thumbs.db
+.wrangler/

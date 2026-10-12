@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - {{ employee.name }}{% endblock %}
+
+{% block content %}
+<section class="welcome-section">
+    <div class="welcome-text">
+        <span class="eyebrow">EMPLOYEE DASHBOARD</span>
+        <h2>Welcome back, {{ employee.name }}! 👋</h2>
+        <p>Department: <strong>{{ employee.department }}</strong> &bull; Employee ID: <strong>#{{ employee_id }}</strong></p>
+    </div>
+    <div class="employee-badge-card">
+        <div class="avatar-circle">
+            {{ employee.name[:1] }}
+        </div>
+        <div class="badge-details">
+            <span class="badge-name">{{ employee.name }}</span>
+            <span class="badge-role">{{ employee.department }} Dept</span>
+        </div>
+    </div>
+</section>
+
+<!-- LEAVE BALANCE SUMMARY METRICS -->
+<section class="stats-grid">
+    <div class="stat-card stat-total">
+        <div class="stat-header">
+            <span class="stat-label">Total Leave Allowance</span>
+            <span class="stat-badge blue">Annual</span>
+        </div>
+        <div class="stat-number">{{ balance_data.total }}</div>
+        <p class="stat-desc">Allocated annual days</p>
+    </div>
+
+    <div class="stat-card stat-used">
+        <div class="stat-header">
+            <span class="stat-label">Days Used</span>
+            <span class="stat-badge orange">Taken</span>
+        </div>
+        <div class="stat-number">{{ balance_data.used }}</div>
+        <p class="stat-desc">Leaves approved & logged</p>
+    </div>
+
+    <div class="stat-card stat-remaining">
+        <div class="stat-header">
+            <span class="stat-label">Days Available</span>
+            <span class="stat-badge green">Balance</span>
+        </div>
+        <div class="stat-number">{{ balance_data.remaining }}</div>
+        <p class="stat-desc">Days eligible to take</p>
+    </div>
+</section>
+
+<!-- PROGRESS OVERVIEW -->
+<section class="card progress-card">
+    <div class="card-header-row">
+        <div>
+            <h3>Leave Consumption Rate</h3>
+            <p class="muted">Percentage of allocated annual quota used so far</p>
+        </div>
+        {% set percent = ((balance_data.used / balance_data.total) * 100)|round|int if balance_data.total > 0 else 0 %}
+        <span class="progress-pill {% if percent > 75 %}alert{% elif percent > 50 %}warning{% else %}normal{% endif %}">
+            {{ percent }}% Used
+        </span>
+    </div>
+    <div class="progress-track" role="progressbar" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ percent }}%;"></div>
+    </div>
+</section>
+
+<!-- QUICK ACTIONS -->
+<section class="card quick-actions-card">
+    <div class="card-header-row">
+        <div>
+            <h3>Quick Actions</h3>
+            <p class="muted">Access common employee self-service tasks</p>
+        </div>
+    </div>
+
+    <div class="action-grid">
+        <a href="{{ url_for('applyLeave') }}" class="action-tile action-apply">
+            <div class="action-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+            <h4>Apply for Leave</h4>
+            <p>Submit a new leave request</p>
+            <span class="action-arrow">Apply now &rarr;</span>
+        </a>
+
+        <a href="{{ url_for('leaveBalance') }}" class="action-tile action-balance">
+            <div class="action-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <h4>Leave Balance</h4>
+            <p>View detailed allowance breakdown</p>
+            <span class="action-arrow">Check balance &rarr;</span>
+        </a>
+
+        <a href="{{ url_for('leaveHistory') }}" class="action-tile action-history">
+            <div class="action-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
+            </div>
+            <h4>Leave History</h4>
+            <p>Review past requests & records</p>
+            <span class="action-arrow">View history &rarr;</span>
+        </a>
+
+        <a href="{{ url_for('employeeDetails') }}" class="action-tile action-profile">
+            <div class="action-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <h4>My Profile</h4>
+            <p>Check employee personal details</p>
+            <span class="action-arrow">View profile &rarr;</span>
+        </a>
+    </div>
+</section>
+
+<!-- RECENT ACTIVITY -->
+<section class="card recent-activity-card">
+    <div class="card-header-row">
+        <div>
+            <h3>Recent Leave Submissions</h3>
+            <p class="muted">Your latest recorded requests</p>
+        </div>
+        <a href="{{ url_for('leaveHistory') }}" class="btn btn-outline btn-sm">View All History</a>
+    </div>
+
+    {% if recent_history %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Leave Category</th>
+                    <th>Days</th>
+                    <th>Date Recorded</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in recent_history %}
+                <tr>
+                    <td>
+                        <span class="category-pill category-{{ item.leave_type|lower }}">
+                            {{ item.leave_type }}
+                        </span>
+                    </td>
+                    <td><strong>{{ item.days }}</strong> day(s)</td>
+                    <td>{{ item.created_at or 'Recently' }}</td>
+                    <td><span class="status-pill status-approved">Approved</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No recent leave requests recorded. Ready for a break?</p>
+        <a href="{{ url_for('applyLeave') }}" class="btn btn-primary btn-sm">Apply for Leave Now</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

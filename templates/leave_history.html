@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}My Leave History{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div class="heading-split">
+        <div>
+            <span class="eyebrow">RECORDS & LOGS</span>
+            <h2>My Leave History</h2>
+            <p>Complete historical log of all your submitted leave applications.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('applyLeave') }}" class="btn btn-primary btn-sm">+ New Request</a>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    {% if history %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Record #</th>
+                    <th>Leave Category</th>
+                    <th>Days</th>
+                    <th>Recorded Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in history %}
+                <tr>
+                    <td><strong>#{{ record.id }}</strong></td>
+                    <td>
+                        <span class="category-pill category-{{ record.leave_type|lower }}">
+                            {{ record.leave_type }}
+                        </span>
+                    </td>
+                    <td><strong>{{ record.days }}</strong> Day(s)</td>
+                    <td>{{ record.created_at or 'Standard Submission' }}</td>
+                    <td>
+                        <span class="status-pill status-approved">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Approved
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </div>
+        <h3>No leave applications found</h3>
+        <p class="muted">You have not submitted any leave applications yet. Whenever you take time off, it will be listed here.</p>
+        <a href="{{ url_for('applyLeave') }}" class="btn btn-primary">Apply for Leave Now</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

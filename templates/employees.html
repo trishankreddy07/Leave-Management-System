@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Directory{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">ORGANIZATION</span>
+    <h2>Employee Directory</h2>
+    <p>Directory of registered company staff and departments.</p>
+</section>
+
+<section class="card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Emp ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Leave Allowance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp_id, emp in employees.items() %}
+                <tr>
+                    <td><strong>#{{ emp_id }}</strong></td>
+                    <td>
+                        <div class="user-row-cell">
+                            <span class="avatar-tiny">{{ emp.name[:1] }}</span>
+                            <span>{{ emp.name }}</span>
+                        </div>
+                    </td>
+                    <td><span class="dept-pill">{{ emp.department }}</span></td>
+                    <td>{{ emp.total_leaves }} Days</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

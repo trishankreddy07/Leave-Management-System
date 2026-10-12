@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}My Details - {{ employee.name }}{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">EMPLOYEE PROFILE</span>
+    <h2>My Employee Details</h2>
+    <p>Personal and departmental profile records on file.</p>
+</section>
+
+<div class="profile-layout">
+    <div class="card profile-card">
+        <div class="profile-banner">
+            <div class="avatar-large">
+                {{ employee.name[:1] }}
+            </div>
+            <h3>{{ employee.name }}</h3>
+            <p class="muted">Department: {{ employee.department }}</p>
+        </div>
+
+        <div class="profile-details-grid">
+            <div class="profile-detail-item">
+                <span class="detail-label">Employee ID</span>
+                <span class="detail-val">#{{ employee_id }}</span>
+            </div>
+            <div class="profile-detail-item">
+                <span class="detail-label">Full Name</span>
+                <span class="detail-val">{{ employee.name }}</span>
+            </div>
+            <div class="profile-detail-item">
+                <span class="detail-label">Assigned Department</span>
+                <span class="detail-val">{{ employee.department }}</span>
+            </div>
+            <div class="profile-detail-item">
+                <span class="detail-label">Employment Status</span>
+                <span class="detail-val text-success">Active &bull; Full-time</span>
+            </div>
+            <div class="profile-detail-item">
+                <span class="detail-label">Annual Leave Entitlement</span>
+                <span class="detail-val">{{ balance_data.total }} Days</span>
+            </div>
+            <div class="profile-detail-item">
+                <span class="detail-label">Remaining Balance</span>
+                <span class="detail-val text-primary">{{ balance_data.remaining }} Days Available</span>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{{ url_for('employeeDashboard') }}" class="btn btn-outline">&larr; Back to Dashboard</a>
+            <a href="{{ url_for('applyLeave') }}" class="btn btn-primary">Apply for Leave</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

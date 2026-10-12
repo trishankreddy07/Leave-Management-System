@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Balance - {{ employee.name }}{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">ALLOWANCE SUMMARY</span>
+    <h2>My Leave Balance</h2>
+    <p>Detailed view of your leave allowances and usage status.</p>
+</section>
+
+<div class="card profile-summary-bar">
+    <div class="avatar-circle">
+        {{ employee.name[:1] }}
+    </div>
+    <div class="profile-summary-info">
+        <h3>{{ employee.name }}</h3>
+        <p class="muted">Employee ID: <strong>#{{ employee_id }}</strong> &bull; Department: <strong>{{ employee.department }}</strong></p>
+    </div>
+    <div class="profile-summary-action">
+        <a href="{{ url_for('applyLeave') }}" class="btn btn-primary btn-sm">+ Apply Leave</a>
+    </div>
+</div>
+
+<section class="stats-grid">
+    <div class="stat-card stat-total">
+        <div class="stat-header">
+            <span class="stat-label">Total Allocated</span>
+            <span class="stat-badge blue">Yearly Quota</span>
+        </div>
+        <div class="stat-number">{{ balance_data.total }}</div>
+        <p class="stat-desc">Standard yearly allocation</p>
+    </div>
+
+    <div class="stat-card stat-used">
+        <div class="stat-header">
+            <span class="stat-label">Total Consumed</span>
+            <span class="stat-badge orange">Used</span>
+        </div>
+        <div class="stat-number">{{ balance_data.used }}</div>
+        <p class="stat-desc">Leaves requested & consumed</p>
+    </div>
+
+    <div class="stat-card stat-remaining">
+        <div class="stat-header">
+            <span class="stat-label">Available Balance</span>
+            <span class="stat-badge green">Remaining</span>
+        </div>
+        <div class="stat-number">{{ balance_data.remaining }}</div>
+        <p class="stat-desc">Available for application</p>
+    </div>
+</section>
+
+<section class="card breakdown-card">
+    <h3>Quota Utilization</h3>
+    <p class="muted">Visual overview of your annual quota</p>
+
+    {% set pct = ((balance_data.used / balance_data.total) * 100)|round|int if balance_data.total > 0 else 0 %}
+    <div class="progress-section-large">
+        <div class="progress-meta">
+            <span>Quota Used: <strong>{{ pct }}%</strong></span>
+            <span>Available: <strong>{{ 100 - pct }}%</strong></span>
+        </div>
+        <div class="progress-track-large">
+            <div class="progress-bar-used" style="width: {{ pct }}%;"></div>
+        </div>
+    </div>
+
+    <div class="quota-highlights">
+        <div class="highlight-item">
+            <div class="highlight-bullet bullet-blue"></div>
+            <div>
+                <strong>{{ balance_data.remaining }} Days Eligible</strong>
+                <p class="muted">You can apply for up to {{ balance_data.remaining }} more days before the end of the leave period.</p>
+            </div>
+        </div>
+        <div class="highlight-item">
+            <div class="highlight-bullet bullet-orange"></div>
+            <div>
+                <strong>{{ balance_data.used }} Days Approved</strong>
+                <p class="muted">Days already recorded in leave history.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
