@@ -39,3 +39,4 @@ leave_system.db
 .DS_Store
 Thumbs.db
 .wrangler/
+.venv-workers/
