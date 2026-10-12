@@ -1,13 +1,24 @@
+import tempfile
+import os
 import unittest
-from app import app, init_db
+import app as main_app
 
 class EmployeeLeaveSystemTest(unittest.TestCase):
     def setUp(self):
-        app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'test-secret-key-321'
-        self.client = app.test_client()
-        with app.app_context():
-            init_db()
+        # Create an isolated temporary SQLite database for each test run
+        self.db_fd, self.db_path = tempfile.mkstemp()
+        main_app.DATABASE_PATH = self.db_path
+        main_app.app.config['TESTING'] = True
+        main_app.app.config['SECRET_KEY'] = 'test-isolated-key-123'
+        self.client = main_app.app.test_client()
+
+        with main_app.app.app_context():
+            main_app.init_db()
+
+    def tearDown(self):
+        os.close(self.db_fd)
+        if os.path.exists(self.db_path):
+            os.remove(self.db_path)
 
     def test_unauthenticated_access_redirects(self):
         response = self.client.get('/')
@@ -47,6 +58,7 @@ class EmployeeLeaveSystemTest(unittest.TestCase):
         history_resp = self.client.get('/history')
         self.assertEqual(history_resp.status_code, 200)
         self.assertIn('Casual', history_resp.get_data(as_text=True))
+        self.assertIn('4', history_resp.get_data(as_text=True))
 
     def test_logout(self):
         self.client.post('/login', data={'employee_id': 101, 'password': 'Employee@123'})
