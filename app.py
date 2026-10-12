@@ -375,6 +375,7 @@ def displayEmployees():
 
 if HAS_CLOUDFLARE_WORKERS:
     Default = wsgi.entrypoint(app)
+    default = Default
 
 
 if __name__ == "__main__":

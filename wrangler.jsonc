@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "leave-management-system",
+  "main": "app.py",
+  "compatibility_date": "2026-10-11",
+  "compatibility_flags": [
+    "python_workers"
+  ],
+  "assets": {
+    "directory": "./static",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "vars": {
+    "SECRET_KEY": "dev-secret-key-employee-leave-system-change-in-production"
+  }
+}
