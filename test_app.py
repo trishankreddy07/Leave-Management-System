@@ -7,6 +7,8 @@ class EmployeeLeaveSystemTest(unittest.TestCase):
     def setUp(self):
         # Create an isolated temporary SQLite database for each test run
         self.db_fd, self.db_path = tempfile.mkstemp()
+        import src.worker
+        src.worker.DATABASE_PATH = self.db_path
         main_app.DATABASE_PATH = self.db_path
         main_app.app.config['TESTING'] = True
         main_app.app.config['SECRET_KEY'] = 'test-isolated-key-123'
